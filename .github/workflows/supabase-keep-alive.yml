@@ -1,0 +1,28 @@
+name: Run Supabase Edge Function Daily
+
+on:
+  schedule:
+    - cron: '0 9 * * *'  # Runs every day at 9:00 AM UTC
+  workflow_dispatch:       # Allows manual trigger from GitHub UI
+
+jobs:
+  invoke-edge-function:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Invoke Supabase Edge Function
+        run: |
+          response=$(curl -s -o /dev/null -w "%{http_code}" \
+            -X POST "${{ secrets.SUPABASE_URL }}/functions/v1/keep-alive" \
+            -H "Authorization: Bearer ${{ secrets.SUPABASE_ANON_KEY }}" \
+            -H "Content-Type: application/json" \
+            -d '{}')
+
+          echo "Response status: $response"
+
+          if [ "$response" -ne 200 ]; then
+            echo "Edge function failed with status $response"
+            exit 1
+          fi
+
+          echo "Edge function invoked successfully!"
