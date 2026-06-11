@@ -13,7 +13,7 @@ jobs:
       - name: Invoke Supabase Edge Function
         run: |
           response=$(curl -s -o /dev/null -w "%{http_code}" \
-            -X POST "${{ secrets.SUPABASE_URL }}/functions/v1/keep-alive" \
+            -X GET "${{ secrets.SUPABASE_URL }}/functions/v1/keep-alive" \
             -H "Authorization: Bearer ${{ secrets.SUPABASE_ANON_KEY }}" \
             -H "Content-Type: application/json" \
             -d '{}')
